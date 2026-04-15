@@ -13,10 +13,6 @@
       padding: 30px;
     }
 
-    h1 {
-      margin-bottom: 20px;
-    }
-
     .card {
       background: rgba(255,255,255,0.08);
       padding: 20px;
@@ -69,18 +65,33 @@
     <br><br>
 
     <button onclick="analisar()">Analisar</button>
-    <button onclick="favoritar()">⭐ Favoritar</button>
 
     <p id="resultado"></p>
   </div>
 
   <div class="card">
-    <h3>📜 Histórico</h3>
+    <h3>📜 Histórico (salvo no Firebase)</h3>
     <div class="history" id="historico"></div>
   </div>
 
+  <!-- 🔥 FIREBASE (VERSÃO QUE FUNCIONA NO HTML) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
   <script>
-    let historico = [];
+    const firebaseConfig = {
+      apiKey: "AIzaSyDXDB_44iSlqh2bHhuEGzZlEirgvlbyCcw",
+      authDomain: "insightflow-7a5a0.firebaseapp.com",
+      projectId: "insightflow-7a5a0",
+      storageBucket: "insightflow-7a5a0.firebasestorage.app",
+      messagingSenderId: "562764608972",
+      appId: "1:562764608972:web:3f796c4d748a37de2dd969"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // ----------------------------
 
     function analisar() {
       let valor = document.getElementById("input").value.toLowerCase();
@@ -94,57 +105,50 @@
       let resposta = "";
 
       if (valor.includes("erro") || valor.includes("problema")) {
-        resposta = "⚠️ Detectamos um possível problema.";
-      } 
-      else if (valor.includes("sucesso") || valor.includes("bom")) {
+        resposta = "⚠️ Problema detectado.";
+      } else if (valor.includes("sucesso") || valor.includes("bom")) {
         resposta = "✅ Resultado positivo!";
-      } 
-      else if (valor.length < 5) {
-        resposta = "ℹ️ Informação muito curta.";
-      } 
-      else {
-        resposta = "📊 Dados dentro do padrão esperado.";
+      } else if (valor.length < 5) {
+        resposta = "ℹ️ Texto muito curto.";
+      } else {
+        resposta = "📊 Dentro do padrão.";
       }
 
       resultado.innerText = resposta;
 
-      // salvar no histórico
-      historico.push({ texto: valor, resposta: resposta, favorito: false });
-      atualizarHistorico();
+      // 🔥 SALVAR NO FIREBASE
+      db.collection("analises").add({
+        texto: valor,
+        resposta: resposta,
+        data: new Date()
+      });
+
+      carregarHistorico();
     }
 
-    function atualizarHistorico() {
+    function carregarHistorico() {
       let div = document.getElementById("historico");
       div.innerHTML = "";
 
-      historico.forEach((item, index) => {
-        let el = document.createElement("div");
-        el.className = "item";
+      db.collection("analises")
+        .orderBy("data", "desc")
+        .limit(5)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            let item = doc.data();
 
-        el.innerHTML = `
-          <strong>${item.texto}</strong><br>
-          ${item.resposta}<br>
-          <button onclick="toggleFavorito(${index})">
-            ${item.favorito ? "💛 Favorito" : "⭐ Favoritar"}
-          </button>
-        `;
+            let el = document.createElement("div");
+            el.className = "item";
+            el.innerHTML = `<strong>${item.texto}</strong><br>${item.resposta}`;
 
-        div.appendChild(el);
-      });
+            div.appendChild(el);
+          });
+        });
     }
 
-    function toggleFavorito(index) {
-      historico[index].favorito = !historico[index].favorito;
-      atualizarHistorico();
-    }
-
-    function favoritar() {
-      let ultimo = historico[historico.length - 1];
-      if (ultimo) {
-        ultimo.favorito = true;
-        atualizarHistorico();
-      }
-    }
+    // carregar ao abrir
+    carregarHistorico();
   </script>
 
 </body>
