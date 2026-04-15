@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>InsightFlow</title>
+
+  <style>
+    body {
+      background: #0f172a;
+      color: white;
+      font-family: Arial;
+      text-align: center;
+      padding: 50px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
+      width: 300px;
+      margin: auto;
+    }
+
+    button {
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      background: #3b82f6;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>🚀 InsightFlow</h1>
+
+  <div class="card">
+    <p>Digite algo para análise:</p>
+    <input id="input" type="text">
+    <br><br>
+    <button onclick="analisar()">Analisar</button>
+    <p id="resultado"></p>
+  </div>
+
+  <script>
+    function analisar() {
+      let valor = document.getElementById("input").value;
+      let resultado = document.getElementById("resultado");
+
+      if (valor === "") {
+        resultado.innerText = "Digite algo!";
+      } else {
+        resultado.innerText = "Análise: " + valor + " está sendo processado...";
+      }
+    }
+  </script>
+
+</body>
+</html>
