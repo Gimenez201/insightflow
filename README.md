@@ -39,10 +39,8 @@ Tecnologias Utilizadas
 
  Acesse o Projeto
 
-👉 
+👉 https://gimenez201.github.io/insightflow/
 
 ---
 
- Autor
-
-Gimenez
+ Autor: Gimenez
