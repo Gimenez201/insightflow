@@ -13,6 +13,10 @@
       padding: 30px;
     }
 
+    h1 {
+      margin-bottom: 20px;
+    }
+
     .card {
       background: rgba(255,255,255,0.08);
       padding: 20px;
@@ -65,18 +69,22 @@
     <br><br>
 
     <button onclick="analisar()">Analisar</button>
+    <button onclick="exportarPDF()">📄 Exportar PDF</button>
 
     <p id="resultado"></p>
   </div>
 
   <div class="card">
-    <h3>📜 Histórico (salvo no Firebase)</h3>
+    <h3>📜 Histórico (Firebase)</h3>
     <div class="history" id="historico"></div>
   </div>
 
-  <!-- 🔥 FIREBASE (VERSÃO QUE FUNCIONA NO HTML) -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+  <!-- PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
     const firebaseConfig = {
@@ -91,8 +99,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // ----------------------------
-
     function analisar() {
       let valor = document.getElementById("input").value.toLowerCase();
       let resultado = document.getElementById("resultado");
@@ -106,17 +112,19 @@
 
       if (valor.includes("erro") || valor.includes("problema")) {
         resposta = "⚠️ Problema detectado.";
-      } else if (valor.includes("sucesso") || valor.includes("bom")) {
+      } 
+      else if (valor.includes("sucesso") || valor.includes("bom")) {
         resposta = "✅ Resultado positivo!";
-      } else if (valor.length < 5) {
+      } 
+      else if (valor.length < 5) {
         resposta = "ℹ️ Texto muito curto.";
-      } else {
+      } 
+      else {
         resposta = "📊 Dentro do padrão.";
       }
 
       resultado.innerText = resposta;
 
-      // 🔥 SALVAR NO FIREBASE
       db.collection("analises").add({
         texto: valor,
         resposta: resposta,
@@ -147,7 +155,32 @@
         });
     }
 
-    // carregar ao abrir
+    function exportarPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      doc.text("Relatório - InsightFlow", 10, 10);
+
+      let y = 20;
+
+      db.collection("analises")
+        .orderBy("data", "desc")
+        .limit(5)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((docItem) => {
+            let item = docItem.data();
+
+            doc.text("Texto: " + item.texto, 10, y);
+            y += 10;
+            doc.text("Resultado: " + item.resposta, 10, y);
+            y += 15;
+          });
+
+          doc.save("relatorio.pdf");
+        });
+    }
+
     carregarHistorico();
   </script>
 
