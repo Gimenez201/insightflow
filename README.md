@@ -2,6 +2,7 @@
 
 O InsightFlow é uma ferramenta web desenvolvida com foco em análise inteligente de dados, utilizando conceitos de engenharia reversa, inteligência artificial simulada e integração com Firebase.
 
+
 ---
 
  Objetivo
