@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>InsightFlow</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:'Poppins',sans-serif;
+    }
+
+    body{
+      min-height:100vh;
+      background:#050505;
+      overflow-x:hidden;
+      color:white;
+      position:relative;
+    }
+
+    /* Fundo animado */
+
+    .bg{
+      position:fixed;
+      inset:0;
+      overflow:hidden;
+      z-index:-1;
+    }
+
+    .blob{
+      position:absolute;
+      width:500px;
+      height:500px;
+      border-radius:50%;
+      filter:blur(120px);
+      opacity:0.5;
+      animation:move 12s infinite alternate ease-in-out;
+    }
+
+    .blob:nth-child(1){
+      background:#ff00c8;
+      top:-100px;
+      left:-100px;
+    }
+
+    .blob:nth-child(2){
+      background:#00d9ff;
+      top:100px;
+      right:-100px;
+      animation-delay:2s;
+    }
+
+    .blob:nth-child(3){
+      background:#7a00ff;
+      bottom:-100px;
+      left:30%;
+      animation-delay:4s;
+    }
+
+    @keyframes move{
+      from{
+        transform:translateY(0px) translateX(0px) scale(1);
+      }
+      to{
+        transform:translateY(40px) translateX(40px) scale(1.1);
+      }
+    }
+
+    .grid{
+      position:absolute;
+      inset:0;
+      background-image:
+      linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+
+      background-size:60px 60px;
+    }
+
+    /* Conteúdo */
+
+    .container{
+      width:90%;
+      max-width:1300px;
+      margin:auto;
+      padding:40px 0;
+    }
+
+    nav{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:100px;
+    }
+
+    .logo{
+      font-size:42px;
+      font-weight:800;
+      background:linear-gradient(90deg,#ff00c8,#00d9ff,#7a00ff);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      animation:glow 3s infinite linear;
+    }
+
+    @keyframes glow{
+      0%{filter:hue-rotate(0deg);}
+      100%{filter:hue-rotate(360deg);}
+    }
+
+    .nav-btn{
+      padding:14px 28px;
+      border:none;
+      border-radius:18px;
+      background:rgba(255,255,255,0.08);
+      backdrop-filter:blur(20px);
+      color:white;
+      cursor:pointer;
+      transition:0.3s;
+      border:1px solid rgba(255,255,255,0.08);
+    }
+
+    .nav-btn:hover{
+      transform:translateY(-3px);
+      background:rgba(255,255,255,0.15);
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:60px;
+      align-items:center;
+      margin-bottom:120px;
+    }
+
+    .badge{
+      display:inline-block;
+      padding:10px 18px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.08);
+      backdrop-filter:blur(20px);
+      margin-bottom:25px;
+      border:1px solid rgba(255,255,255,0.08);
+      color:#ddd;
+      font-size:14px;
+    }
+
+    h1{
+      font-size:72px;
+      line-height:1;
+      margin-bottom:25px;
+      font-weight:800;
+    }
+
+    .gradient{
+      background:linear-gradient(90deg,#ff00c8,#00d9ff,#7a00ff);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    .hero p{
+      color:#ccc;
+      line-height:1.8;
+      margin-bottom:35px;
+      font-size:18px;
+    }
+
+    .buttons{
+      display:flex;
+      gap:20px;
+      flex-wrap:wrap;
+    }
+
+    .primary{
+      padding:16px 30px;
+      border:none;
+      border-radius:20px;
+      background:linear-gradient(90deg,#ff00c8,#00d9ff,#7a00ff);
+      color:white;
+      font-weight:600;
+      cursor:pointer;
+      transition:0.3s;
+      box-shadow:0 0 30px rgba(0,217,255,0.4);
+    }
+
+    .primary:hover{
+      transform:scale(1.05);
+    }
+
+    .secondary{
+      padding:16px 30px;
+      border:none;
+      border-radius:20px;
+      background:rgba(255,255,255,0.08);
+      backdrop-filter:blur(20px);
+      color:white;
+      cursor:pointer;
+      transition:0.3s;
+      border:1px solid rgba(255,255,255,0.08);
+    }
+
+    .secondary:hover{
+      background:rgba(255,255,255,0.15);
+    }
+
+    /* Dashboard */
+
+    .dashboard{
+      background:rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.08);
+      backdrop-filter:blur(30px);
+      border-radius:35px;
+      padding:30px;
+      position:relative;
+      overflow:hidden;
+      box-shadow:0 0 40px rgba(0,0,0,0.5);
+    }
+
+    .dashboard::before{
+      content:'';
+      position:absolute;
+      inset:0;
+      background:linear-gradient(90deg,#ff00c81a,#00d9ff1a,#7a00ff1a);
+    }
+
+    .dashboard-content{
+      position:relative;
+      z-index:2;
+    }
+
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:30px;
+    }
+
+    .power{
+      width:60px;
+      height:60px;
+      border-radius:20px;
+      background:linear-gradient(90deg,#ff00c8,#00d9ff,#7a00ff);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:28px;
+      animation:pulse 2s infinite;
+    }
+
+    @keyframes pulse{
+      0%{transform:scale(1);}
+      50%{transform:scale(1.1);}
+      100%{transform:scale(1);}
+    }
+
+    .card{
+      background:rgba(0,0,0,0.3);
+      border:1px solid rgba(255,255,255,0.06);
+      border-radius:25px;
+      padding:20px;
+      margin-bottom:20px;
+    }
+
+    .progress{
+      width:100%;
+      height:14px;
+      background:rgba(255,255,255,0.08);
+      border-radius:999px;
+      overflow:hidden;
+      margin-top:12px;
+    }
+
+    .progress-bar{
+      width:94%;
+      height:100%;
+      border-radius:999px;
+      background:linear-gradient(90deg,#ff00c8,#00d9ff,#7a00ff);
+      animation:load 3s infinite;
+    }
+
+    @keyframes load{
+      0%{width:30%;}
+      100%{width:94%;}
+    }
+
+    .mini-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:15px;
+    }
+
+    .big{
+      font-size:36px;
+      font-weight:700;
+      margin-top:10px;
+    }
+
+    .chart{
+      height:180px;
+      display:flex;
+      align-items:flex-end;
+      gap:12px;
+    }
+
+    .bar{
+      flex:1;
+      border-radius:18px 18px 0 0;
+      background:linear-gradient(to top,#ff00c8,#00d9ff,#7a00ff);
+      animation:bars 2s infinite alternate;
+    }
+
+    .bar:nth-child(1){height:40%;}
+    .bar:nth-child(2){height:75%;}
+    .bar:nth-child(3){height:55%;}
+    .bar:nth-child(4){height:90%;}
+    .bar:nth-child(5){height:65%;}
+    .bar:nth-child(6){height:100%;}
+
+    @keyframes bars{
+      from{opacity:0.7;}
+      to{opacity:1;}
+    }
+
+    /* Recursos */
+
+    .section-title{
+      text-align:center;
+      margin-bottom:60px;
+    }
+
+    .section-title h2{
+      font-size:54px;
+      margin-bottom:15px;
+    }
+
+    .section-title p{
+      color:#bbb;
+    }
+
+    .features{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:25px;
+      margin-bottom:120px;
+    }
+
+    .feature{
+      padding:30px;
+      border-radius:30px;
+      background:rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.08);
+      backdrop-filter:blur(25px);
+      transition:0.4s;
+    }
+
+    .feature:hover{
+      transform:translateY(-10px) scale(1.03);
+      box-shadow:0 0 30px rgba(0,217,255,0.2);
+    }
+
+    .feature-icon{
+      font-size:55px;
+      margin-bottom:20px;
+    }
+
+    .feature h3{
+      font-size:26px;
+      margin-bottom:15px;
+    }
+
+    .feature p{
+      color:#ccc;
+      line-height:1.7;
+    }
+
+    /* CTA */
+
+    .cta{
+      padding:70px;
+      border-radius:40px;
+      background:rgba(255,255,255,0.08);
+      backdrop-filter:blur(25px);
+      border:1px solid rgba(255,255,255,0.08);
+      text-align:center;
+      margin-bottom:80px;
+    }
+
+    .cta h2{
+      font-size:58px;
+      margin-bottom:25px;
+    }
+
+    .cta p{
+      color:#ccc;
+      max-width:700px;
+      margin:auto;
+      line-height:1.8;
+      margin-bottom:35px;
+    }
+
+    footer{
+      text-align:center;
+      color:#888;
+      padding-bottom:40px;
+    }
+
+    /* Responsivo */
+
+    @media(max-width:950px){
+
+      .hero{
+        grid-template-columns:1fr;
+      }
+
+      h1{
+        font-size:52px;
+      }
+
+      .section-title h2,
+      .cta h2{
+        font-size:42px;
+      }
+
+      nav{
+        flex-direction:column;
+        gap:20px;
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="bg">
+    <div class="blob"></div>
+    <div class="blob"></div>
+    <div class="blob"></div>
+    <div class="grid"></div>
+  </div>
+
+  <div class="container">
+
+    <nav>
+      <div>
+        <div class="logo">InsightFlow</div>
+        <small style="color:#aaa;">Intelligent Data Experience</small>
+      </div>
+
+      <button class="nav-btn">Dashboard</button>
+    </nav>
+
+    <section class="hero">
+
+      <div>
+
+        <div class="badge">
+          ✨ Powered by Firebase & Simulated AI
+        </div>
+
+        <h1>
+          Data Analysis
+          <span class="gradient">Reinvented</span>
+        </h1>
+
+        <p>
+          InsightFlow transforma dados em insights inteligentes utilizando análise automatizada, armazenamento em nuvem e um design futurista moderno inspirado em aplicações premium.
+        </p>
+
+        <div class="buttons">
+          <button class="primary">Iniciar Análise</button>
+          <button class="secondary">Ver Recursos</button>
+        </div>
+
+      </div>
+
+      <div class="dashboard">
+
+        <div class="dashboard-content">
+
+          <div class="top">
+
+            <div>
+              <h2>Painel Inteligente</h2>
+              <p style="color:#bbb;">Monitoramento em tempo real</p>
+            </div>
+
+            <div class="power">
+              ⚡
+            </div>
+
+          </div>
+
+          <div class="card">
+
+            <div style="display:flex;justify-content:space-between;">
+              <span style="color:#bbb;">Precisão da análise</span>
+              <strong style="color:#00d9ff;">94%</strong>
+            </div>
+
+            <div class="progress">
+              <div class="progress-bar"></div>
+            </div>
+
+          </div>
+
+          <div class="mini-grid">
+
+            <div class="card">
+              <small style="color:#bbb;">Histórico</small>
+              <div class="big">128</div>
+            </div>
+
+            <div class="card">
+              <small style="color:#bbb;">Relatórios</small>
+              <div class="big">46</div>
+            </div>
+
+          </div>
+
+          <div class="card">
+
+            <div class="chart">
+
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar"></div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section>
+
+      <div class="section-title">
+        <h2>Recursos Avançados</h2>
+        <p>
+          Uma plataforma moderna focada em automação, inteligência e produtividade.
+        </p>
+      </div>
+
+      <div class="features">
+
+        <div class="feature">
+          <div class="feature-icon">🧠</div>
+          <h3>Análise Inteligente</h3>
+          <p>
+            Sistema automatizado que simula inteligência artificial para gerar insights avançados.
+          </p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">☁️</div>
+          <h3>Cloud Firestore</h3>
+          <p>
+            Armazenamento em nuvem integrado ao Firebase para persistência segura.
+          </p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">📚</div>
+          <h3>Histórico Dinâmico</h3>
+          <p>
+            Histórico inteligente com monitoramento contínuo das análises realizadas.
+          </p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">📄</div>
+          <h3>Exportação PDF</h3>
+          <p>
+            Geração automática de relatórios completos em PDF para compartilhamento.
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <section class="cta">
+
+      <h2>Ready for the Future?</h2>
+
+      <p>
+        Explore uma nova geração de ferramentas inteligentes com design futurista, integração em nuvem e análise avançada de dados.
+      </p>
+
+      <button class="primary">
+        Começar Agora
+      </button>
+
+    </section>
+
+    <footer>
+      © 2026 InsightFlow • Intelligent Data Experience
+    </footer>
+
+  </div>
+
+</body>
+  </html>
