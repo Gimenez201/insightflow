@@ -16,7 +16,6 @@
       padding: 40px;
     }
 
-    /* 🌈 Nome arco-íris animado */
     .title {
       font-size: 48px;
       font-weight: 800;
@@ -75,52 +74,76 @@
   <div class="title">InsightFlow</div>
 
   <div class="card">
-
     <h3>Nova Análise</h3>
-
-    <textarea id="input" placeholder="Digite algo..."></textarea>
-
+    <textarea id="input" placeholder="Digite sua análise..."></textarea>
     <button id="btn">Salvar Análise</button>
-
   </div>
 
   <div class="card">
-
     <h3>Histórico</h3>
-
     <div id="list"></div>
-
   </div>
 
-  <!-- FIREBASE -->
   <script type="module">
 
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
     import {
       getFirestore,
       collection,
       addDoc,
       getDocs
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-    <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+    // 🔥 SUA CONFIG FIREBASE (JÁ INSERIDA)
 
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyDJnEG0ocRf3qHXzMiwG-tcS7EK36onNnA",
-    authDomain: "insightflow-5dee2.firebaseapp.com",
-    projectId: "insightflow-5dee2",
-    storageBucket: "insightflow-5dee2.firebasestorage.app",
-    messagingSenderId: "370666999977",
-    appId: "1:370666999977:web:3b5a8d50a31898bd8fd9b8"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyDJnEG0ocRf3qHXzMiwG-tcS7EK36onNnA",
+      authDomain: "insightflow-5dee2.firebaseapp.com",
+      projectId: "insightflow-5dee2",
+      storageBucket: "insightflow-5dee2.firebasestorage.app",
+      messagingSenderId: "370666999977",
+      appId: "1:370666999977:web:3b5a8d50a31898bd8fd9b8"
+    };
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-</script> 
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const input = document.getElementById("input");
+    const btn = document.getElementById("btn");
+    const list = document.getElementById("list");
+
+    async function carregar() {
+      list.innerHTML = "";
+
+      const snap = await getDocs(collection(db, "analises"));
+
+      snap.forEach(doc => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerText = doc.data().texto;
+        list.appendChild(div);
+      });
+    }
+
+    btn.addEventListener("click", async () => {
+
+      if (!input.value.trim()) {
+        alert("Digite algo");
+        return;
+      }
+
+      await addDoc(collection(db, "analises"), {
+        texto: input.value,
+        data: new Date()
+      });
+
+      input.value = "";
+      carregar();
+    });
+
+    carregar();
+
+  </script>
+
 </body>
 </html>
