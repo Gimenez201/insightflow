@@ -11,24 +11,33 @@
     body {
       margin: 0;
       font-family: Poppins;
-      background: #0b0b0f;
+      background: #0b0b10;
       color: white;
       padding: 40px;
     }
 
-    h1 {
-      font-size: 40px;
-      background: linear-gradient(90deg,#ff00cc,#00d9ff,#7a00ff);
+    /* 🌈 Nome arco-íris animado */
+    .title {
+      font-size: 48px;
+      font-weight: 800;
+      background: linear-gradient(90deg,#ff00cc,#00d9ff,#7a00ff,#ffcc00,#ff00cc);
+      background-size: 400% 400%;
       -webkit-background-clip: text;
       color: transparent;
+      animation: rainbow 6s linear infinite;
+    }
+
+    @keyframes rainbow {
+      0% { background-position: 0% }
+      100% { background-position: 400% }
     }
 
     .card {
       background: rgba(255,255,255,0.08);
       padding: 20px;
       border-radius: 20px;
-      backdrop-filter: blur(10px);
       margin-top: 20px;
+      backdrop-filter: blur(10px);
     }
 
     textarea {
@@ -37,19 +46,19 @@
       border-radius: 15px;
       border: none;
       padding: 15px;
-      outline: none;
       font-size: 16px;
+      outline: none;
     }
 
     button {
       margin-top: 10px;
-      padding: 12px 20px;
+      padding: 12px 18px;
       border: none;
       border-radius: 12px;
-      background: linear-gradient(90deg,#ff00cc,#00d9ff);
-      color: white;
       cursor: pointer;
       font-weight: bold;
+      background: linear-gradient(90deg,#ff00cc,#00d9ff);
+      color: white;
     }
 
     .item {
@@ -63,39 +72,38 @@
 
 <body>
 
-<h1>InsightFlow</h1>
+  <div class="title">InsightFlow</div>
 
-<div class="card">
+  <div class="card">
 
-  <h3>Nova Análise</h3>
+    <h3>Nova Análise</h3>
 
-  <textarea id="input"></textarea>
+    <textarea id="input" placeholder="Digite algo..."></textarea>
 
-  <button id="btn">Salvar Análise</button>
+    <button id="btn">Salvar Análise</button>
 
-</div>
+  </div>
 
-<div class="card">
+  <div class="card">
 
-  <h3>Histórico</h3>
+    <h3>Histórico</h3>
 
-  <div id="list"></div>
+    <div id="list"></div>
 
-</div>
+  </div>
 
-<!-- 🔥 FIREBASE COMEÇA AQUI -->
-<script type="module">
+  <!-- FIREBASE -->
+  <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-
-<script type="module">
+    <script type="module">
   // Import the functions you need from the SDKs you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
   // TODO: Add SDKs for Firebase products that you want to use
@@ -113,56 +121,6 @@ import {
 
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
-</script>
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const input = document.getElementById("input");
-const btn = document.getElementById("btn");
-const list = document.getElementById("list");
-
-// salvar
-btn.addEventListener("click", async () => {
-
-  if (!input.value.trim()) {
-    alert("Digite algo");
-    return;
-  }
-
-  await addDoc(collection(db, "analises"), {
-    texto: input.value,
-    data: new Date()
-  });
-
-  input.value = "";
-
-  carregar();
-
-});
-
-// carregar histórico
-async function carregar() {
-
-  list.innerHTML = "";
-
-  const snap = await getDocs(collection(db, "analises"));
-
-  snap.forEach(doc => {
-
-    const div = document.createElement("div");
-    div.className = "item";
-    div.innerText = doc.data().texto;
-
-    list.appendChild(div);
-
-  });
-
-}
-
-carregar();
-
-</script>
-
+</script> 
 </body>
 </html>
