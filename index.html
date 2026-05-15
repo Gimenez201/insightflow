@@ -658,6 +658,48 @@
 
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
+  import {
+  collection,
+  addDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const saveBtn = document.getElementById("saveAnalysis");
+
+saveBtn.addEventListener("click", async () => {
+
+  const input =
+    document.getElementById("analysisInput");
+
+  const text = input.value;
+
+  if(text.trim() === ""){
+    alert("Digite algo primeiro.");
+    return;
+  }
+
+  try{
+
+    await addDoc(
+      collection(db, "analyses"),
+      {
+        text: text,
+        createdAt: new Date()
+      }
+    );
+
+    alert("Análise salva com sucesso!");
+
+    input.value = "";
+
+  }catch(error){
+
+    console.error(error);
+
+    alert("Erro ao salvar.");
+
+  }
+
+});
 </script>
 </body>
 </html>
