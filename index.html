@@ -23,13 +23,11 @@
       background:#050505;
       overflow-x:hidden;
       color:white;
-      position:relative;
     }
 
     .bg{
       position:fixed;
       inset:0;
-      overflow:hidden;
       z-index:-1;
     }
 
@@ -63,11 +61,11 @@
       display:flex;
       justify-content:space-between;
       align-items:center;
-      margin-bottom:80px;
+      margin-bottom:70px;
     }
 
     .logo{
-      font-size:42px;
+      font-size:40px;
       font-weight:800;
       background:linear-gradient(90deg,#ff00c8,#00d9ff,#7a00ff);
       -webkit-background-clip:text;
@@ -80,45 +78,10 @@
       100%{filter:hue-rotate(360deg);}
     }
 
-    .nav-btn{
-      padding:14px 28px;
+    .buttons button{
+      padding:14px 22px;
       border:none;
-      border-radius:18px;
-      background:rgba(255,255,255,0.08);
-      color:white;
-      cursor:pointer;
-    }
-
-    .hero{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:60px;
-      align-items:center;
-      margin-bottom:80px;
-    }
-
-    h1{
-      font-size:64px;
-      line-height:1;
-      margin-bottom:20px;
-    }
-
-    .gradient{
-      background:linear-gradient(90deg,#ff00c8,#00d9ff,#7a00ff);
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-    }
-
-    .buttons{
-      display:flex;
-      gap:20px;
-      flex-wrap:wrap;
-    }
-
-    .primary,.secondary{
-      padding:14px 24px;
-      border-radius:16px;
-      border:none;
+      border-radius:14px;
       cursor:pointer;
       font-weight:600;
     }
@@ -133,30 +96,36 @@
       color:white;
     }
 
+    .hero{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:50px;
+      align-items:center;
+    }
+
+    h1{
+      font-size:60px;
+      line-height:1;
+    }
+
+    .gradient{
+      background:linear-gradient(90deg,#ff00c8,#00d9ff,#7a00ff);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
     .dashboard{
       background:rgba(255,255,255,0.08);
-      border-radius:30px;
-      padding:25px;
+      padding:20px;
+      border-radius:25px;
       backdrop-filter:blur(20px);
     }
 
-    .card{
-      background:rgba(0,0,0,0.3);
-      padding:15px;
-      border-radius:15px;
-      margin-bottom:15px;
-    }
-
-    #history{
-      max-height:220px;
-      overflow:auto;
-    }
-
     .item{
-      padding:8px;
-      margin-bottom:8px;
       background:rgba(255,255,255,0.05);
+      padding:10px;
       border-radius:10px;
+      margin-bottom:10px;
     }
 
     /* MODAL */
@@ -164,27 +133,26 @@
       display:none;
       position:fixed;
       inset:0;
-      background:rgba(0,0,0,0.75);
+      background:rgba(0,0,0,0.7);
       backdrop-filter:blur(10px);
-      align-items:center;
       justify-content:center;
-      z-index:999;
+      align-items:center;
     }
 
-    .modal-box{
+    .box{
+      background:#111;
+      padding:20px;
+      border-radius:20px;
       width:90%;
       max-width:500px;
-      background:#111;
-      padding:25px;
-      border-radius:20px;
     }
 
     textarea{
       width:100%;
       height:120px;
-      margin-top:15px;
-      padding:12px;
-      border-radius:12px;
+      margin-top:10px;
+      border-radius:10px;
+      padding:10px;
       border:none;
       outline:none;
     }
@@ -192,26 +160,7 @@
     .modal-buttons{
       display:flex;
       gap:10px;
-      margin-top:15px;
-    }
-
-    .modal-buttons button{
-      flex:1;
-      padding:12px;
-      border:none;
-      border-radius:12px;
-      cursor:pointer;
-      font-weight:bold;
-    }
-
-    .save{
-      background:linear-gradient(90deg,#ff00c8,#00d9ff);
-      color:white;
-    }
-
-    .cancel{
-      background:rgba(255,255,255,0.1);
-      color:white;
+      margin-top:10px;
     }
 
   </style>
@@ -229,44 +178,38 @@
 
   <nav>
     <div class="logo">InsightFlow</div>
-    <button class="nav-btn">Dashboard</button>
   </nav>
 
-  <section class="hero">
+  <div class="hero">
 
     <div>
       <h1>Data <span class="gradient">Reinvented</span></h1>
 
       <div class="buttons">
-        <button class="primary" id="openModal">Iniciar Análise</button>
-        <button class="secondary" id="pdfBtn">Exportar PDF</button>
+        <button class="primary" id="open">Iniciar Análise</button>
+        <button class="secondary" id="pdf">Exportar PDF</button>
       </div>
     </div>
 
     <div class="dashboard">
-      <div class="card">
-        <h3>Histórico</h3>
-        <div id="history"></div>
-      </div>
+      <h3>Histórico</h3>
+      <div id="history"></div>
     </div>
 
-  </section>
+  </div>
 
 </div>
 
 <!-- MODAL -->
 <div id="modal">
-  <div class="modal-box">
-
+  <div class="box">
     <h2>Nova Análise</h2>
-
-    <textarea id="textInput" placeholder="Digite sua análise..."></textarea>
+    <textarea id="text"></textarea>
 
     <div class="modal-buttons">
-      <button class="save" id="saveBtn">Salvar</button>
-      <button class="cancel" id="closeBtn">Cancelar</button>
+      <button id="save" class="primary">Salvar</button>
+      <button id="close" class="secondary">Cancelar</button>
     </div>
-
   </div>
 </div>
 
@@ -281,7 +224,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDJnEG0ocRf3qHXzMiwG-tcS7EK36onNNA",
+  apiKey: "COLE_AQUI_SUA_API_KEY",
   authDomain: "insightflow-5dee2.firebaseapp.com",
   projectId: "insightflow-5dee2",
   storageBucket: "insightflow-5dee2.firebasestorage.app",
@@ -293,74 +236,107 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const modal = document.getElementById("modal");
-const openModal = document.getElementById("openModal");
-const closeBtn = document.getElementById("closeBtn");
-const saveBtn = document.getElementById("saveBtn");
-const textInput = document.getElementById("textInput");
 const history = document.getElementById("history");
-const pdfBtn = document.getElementById("pdfBtn");
 
 let cache = [];
 
-function open() {
-  modal.style.display = "flex";
+/* ===== IA SIMULADA ===== */
+function analisar(texto){
+
+  const t = texto.toLowerCase();
+
+  if(t.includes("erro") || t.includes("problema")){
+    return "⚠️ Problema detectado no sistema.";
+  }
+
+  if(t.includes("queda") || t.includes("diminuiu")){
+    return "📉 Tendência negativa identificada.";
+  }
+
+  if(t.includes("aumento") || t.includes("cresceu")){
+    return "📈 Tendência positiva detectada.";
+  }
+
+  return "📊 Análise neutra sem padrões críticos.";
 }
 
-function close() {
-  modal.style.display = "none";
-  textInput.value = "";
-}
+/* ===== LOAD HISTÓRICO ===== */
+async function load(){
 
-openModal.addEventListener("click", open);
-closeBtn.addEventListener("click", close);
-
-async function load() {
   history.innerHTML = "";
   cache = [];
 
-  const snap = await getDocs(collection(db, "analises"));
+  const snap = await getDocs(collection(db,"analises"));
 
   snap.forEach(doc => {
-    cache.push(doc.data().texto);
+
+    const data = doc.data();
+
+    cache.push(data);
 
     const div = document.createElement("div");
     div.className = "item";
-    div.innerText = doc.data().texto;
+
+    div.innerHTML = `
+      <b>${data.texto}</b><br>
+      <small>${data.analise}</small>
+    `;
 
     history.appendChild(div);
+
   });
+
 }
 
-saveBtn.addEventListener("click", async () => {
+/* ===== SALVAR ===== */
+document.getElementById("save").onclick = async () => {
 
-  if(!textInput.value.trim()) return;
+  const text = document.getElementById("text").value;
 
-  await addDoc(collection(db, "analises"), {
-    texto: textInput.value,
-    data: new Date()
+  if(!text) return;
+
+  const analise = analisar(text);
+
+  await addDoc(collection(db,"analises"),{
+    texto:text,
+    analise:analise,
+    data:new Date()
   });
 
-  close();
-  load();
-});
+  document.getElementById("text").value = "";
+  modal.style.display="none";
 
-pdfBtn.addEventListener("click", () => {
+  load();
+
+};
+
+/* ===== MODAL ===== */
+document.getElementById("open").onclick = () => {
+  modal.style.display="flex";
+};
+
+document.getElementById("close").onclick = () => {
+  modal.style.display="none";
+};
+
+/* ===== PDF ===== */
+document.getElementById("pdf").onclick = () => {
 
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
-  doc.text("InsightFlow Report", 10, 10);
+  doc.text("InsightFlow Report",10,10);
 
-  let y = 20;
+  let y=20;
 
-  cache.forEach((t,i) => {
-    doc.text(`${i+1}. ${t}`, 10, y);
-    y += 10;
+  cache.forEach((i,idx)=>{
+    doc.text(`${idx+1}. ${i.texto} -> ${i.analise}`,10,y);
+    y+=10;
   });
 
-  doc.save("insightflow.pdf");
+  doc.save("relatorio.pdf");
 
-});
+};
 
 load();
 
