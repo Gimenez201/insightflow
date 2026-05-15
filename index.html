@@ -10,101 +10,268 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-  <!-- (SEU CSS COMPLETO CONTINUA IGUAL) -->
   <style>
-    /* 👉 TODO SEU CSS ORIGINAL FOI MANTIDO INTACTO */
-    /* (não vou repetir aqui pra não quebrar o layout) */
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:'Poppins',sans-serif;
+    }
+
+    body{
+      min-height:100vh;
+      background:#050505;
+      overflow-x:hidden;
+      color:white;
+      position:relative;
+    }
+
+    .bg{
+      position:fixed;
+      inset:0;
+      overflow:hidden;
+      z-index:-1;
+    }
+
+    .blob{
+      position:absolute;
+      width:500px;
+      height:500px;
+      border-radius:50%;
+      filter:blur(120px);
+      opacity:0.5;
+      animation:move 12s infinite alternate ease-in-out;
+    }
+
+    .blob:nth-child(1){background:#ff00c8;top:-100px;left:-100px;}
+    .blob:nth-child(2){background:#00d9ff;top:100px;right:-100px;animation-delay:2s;}
+    .blob:nth-child(3){background:#7a00ff;bottom:-100px;left:30%;animation-delay:4s;}
+
+    @keyframes move{
+      from{transform:translateY(0px) translateX(0px) scale(1);}
+      to{transform:translateY(40px) translateX(40px) scale(1.1);}
+    }
+
+    .container{
+      width:90%;
+      max-width:1300px;
+      margin:auto;
+      padding:40px 0;
+    }
+
+    nav{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:80px;
+    }
+
+    .logo{
+      font-size:42px;
+      font-weight:800;
+      background:linear-gradient(90deg,#ff00c8,#00d9ff,#7a00ff);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      animation:glow 3s infinite linear;
+    }
+
+    @keyframes glow{
+      0%{filter:hue-rotate(0deg);}
+      100%{filter:hue-rotate(360deg);}
+    }
+
+    .nav-btn{
+      padding:14px 28px;
+      border:none;
+      border-radius:18px;
+      background:rgba(255,255,255,0.08);
+      color:white;
+      cursor:pointer;
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:60px;
+      align-items:center;
+      margin-bottom:80px;
+    }
+
+    h1{
+      font-size:64px;
+      line-height:1;
+      margin-bottom:20px;
+    }
+
+    .gradient{
+      background:linear-gradient(90deg,#ff00c8,#00d9ff,#7a00ff);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    .buttons{
+      display:flex;
+      gap:20px;
+      flex-wrap:wrap;
+    }
+
+    .primary,.secondary{
+      padding:14px 24px;
+      border-radius:16px;
+      border:none;
+      cursor:pointer;
+      font-weight:600;
+    }
+
+    .primary{
+      background:linear-gradient(90deg,#ff00c8,#00d9ff);
+      color:white;
+    }
+
+    .secondary{
+      background:rgba(255,255,255,0.08);
+      color:white;
+    }
+
+    .dashboard{
+      background:rgba(255,255,255,0.08);
+      border-radius:30px;
+      padding:25px;
+      backdrop-filter:blur(20px);
+    }
+
+    .card{
+      background:rgba(0,0,0,0.3);
+      padding:15px;
+      border-radius:15px;
+      margin-bottom:15px;
+    }
+
+    #history{
+      max-height:200px;
+      overflow:auto;
+    }
+
+    .item{
+      padding:8px;
+      margin-bottom:8px;
+      background:rgba(255,255,255,0.05);
+      border-radius:10px;
+    }
   </style>
 </head>
 
 <body>
 
-<!-- ======= SEU HTML ORIGINAL INTACTO ======= -->
-<!-- (não mexi no layout, só adicionei lógica no final) -->
+<div class="bg">
+  <div class="blob"></div>
+  <div class="blob"></div>
+  <div class="blob"></div>
+</div>
 
-<!-- FIREBASE + FUNCIONALIDADE -->
+<div class="container">
+
+  <nav>
+    <div class="logo">InsightFlow</div>
+    <button class="nav-btn">Dashboard</button>
+  </nav>
+
+  <section class="hero">
+
+    <div>
+      <h1>Data <span class="gradient">Reinvented</span></h1>
+
+      <div class="buttons">
+        <button class="primary" id="add">Iniciar Análise</button>
+        <button class="secondary" id="pdf">Exportar PDF</button>
+      </div>
+    </div>
+
+    <div class="dashboard">
+      <div class="card">
+        <h3>Histórico</h3>
+        <div id="history"></div>
+      </div>
+    </div>
+
+  </section>
+
+</div>
+
 <script type="module">
 
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-  import {
-    getFirestore,
-    collection,
-    addDoc,
-    getDocs
-  } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-  // 🔥 SUA CONFIG (JÁ INSERIDA)
-  const firebaseConfig = {
-    apiKey: "AIzaSyDJnEG0ocRf3qHXzMiwG-tcS7EK36onNnA",
-    authDomain: "insightflow-5dee2.firebaseapp.com",
-    projectId: "insightflow-5dee2",
-    storageBucket: "insightflow-5dee2.firebasestorage.app",
-    messagingSenderId: "370666999977",
-    appId: "1:370666999977:web:3b5a8d50a31898bd8fd9b8"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyDJnEG0ocRf3qHXzMiwG-tcS7EK36onNnA",
+  authDomain: "insightflow-5dee2.firebaseapp.com",
+  projectId: "insightflow-5dee2",
+  storageBucket: "insightflow-5dee2.firebasestorage.app",
+  messagingSenderId: "370666999977",
+  appId: "1:370666999977:web:3b5a8d50a31898bd8fd9b8"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-  let cache = [];
+const historyDiv = document.getElementById("history");
+let cache = [];
 
-  // 🔹 cria painel invisível de input (não altera seu design)
-  const hiddenInput = document.createElement("textarea");
-  hiddenInput.style.display = "none";
-  document.body.appendChild(hiddenInput);
+async function load() {
+  historyDiv.innerHTML = "";
+  cache = [];
 
-  async function carregarHistorico() {
-    cache = [];
+  const snap = await getDocs(collection(db, "analises"));
 
-    const snap = await getDocs(collection(db, "analises"));
+  snap.forEach(doc => {
+    const data = doc.data();
+    cache.push(data.texto);
 
-    snap.forEach(doc => {
-      cache.push(doc.data().texto);
-    });
+    const div = document.createElement("div");
+    div.className = "item";
+    div.innerText = data.texto;
+    historyDiv.appendChild(div);
+  });
+}
 
-    console.log("Histórico carregado:", cache);
-  }
+document.getElementById("add").addEventListener("click", async () => {
+  const text = prompt("Digite sua análise:");
 
-  async function salvar(texto) {
-    await addDoc(collection(db, "analises"), {
-      texto,
-      data: new Date()
-    });
+  if (!text) return;
 
-    carregarHistorico();
-  }
-
-  // 🔹 botão "Iniciar Análise"
-  document.querySelector(".primary").addEventListener("click", () => {
-
-    const texto = prompt("Digite sua análise:");
-
-    if (!texto) return;
-
-    salvar(texto);
-
+  await addDoc(collection(db, "analises"), {
+    texto: text,
+    data: new Date()
   });
 
-  // 🔹 exportação PDF
-  document.querySelector(".secondary").addEventListener("click", () => {
+  load();
+});
 
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+document.getElementById("pdf").addEventListener("click", () => {
 
-    doc.text("InsightFlow - Relatório", 10, 10);
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
 
-    let y = 20;
+  doc.text("InsightFlow Report", 10, 10);
 
-    cache.forEach((item, i) => {
-      doc.text(`${i + 1}. ${item}`, 10, y);
-      y += 10;
-    });
+  let y = 20;
 
-    doc.save("insightflow.pdf");
-
+  cache.forEach((t, i) => {
+    doc.text(`${i+1}. ${t}`, 10, y);
+    y += 10;
   });
 
-  carregarHistorico();
+  doc.save("insightflow.pdf");
+
+});
+
+load();
 
 </script>
 
