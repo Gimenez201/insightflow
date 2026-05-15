@@ -148,7 +148,7 @@
     }
 
     #history{
-      max-height:200px;
+      max-height:220px;
       overflow:auto;
     }
 
@@ -158,6 +158,62 @@
       background:rgba(255,255,255,0.05);
       border-radius:10px;
     }
+
+    /* MODAL */
+    #modal{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.75);
+      backdrop-filter:blur(10px);
+      align-items:center;
+      justify-content:center;
+      z-index:999;
+    }
+
+    .modal-box{
+      width:90%;
+      max-width:500px;
+      background:#111;
+      padding:25px;
+      border-radius:20px;
+    }
+
+    textarea{
+      width:100%;
+      height:120px;
+      margin-top:15px;
+      padding:12px;
+      border-radius:12px;
+      border:none;
+      outline:none;
+    }
+
+    .modal-buttons{
+      display:flex;
+      gap:10px;
+      margin-top:15px;
+    }
+
+    .modal-buttons button{
+      flex:1;
+      padding:12px;
+      border:none;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:bold;
+    }
+
+    .save{
+      background:linear-gradient(90deg,#ff00c8,#00d9ff);
+      color:white;
+    }
+
+    .cancel{
+      background:rgba(255,255,255,0.1);
+      color:white;
+    }
+
   </style>
 </head>
 
@@ -182,8 +238,8 @@
       <h1>Data <span class="gradient">Reinvented</span></h1>
 
       <div class="buttons">
-        <button class="primary" id="add">Iniciar Análise</button>
-        <button class="secondary" id="pdf">Exportar PDF</button>
+        <button class="primary" id="openModal">Iniciar Análise</button>
+        <button class="secondary" id="pdfBtn">Exportar PDF</button>
       </div>
     </div>
 
@@ -198,6 +254,22 @@
 
 </div>
 
+<!-- MODAL -->
+<div id="modal">
+  <div class="modal-box">
+
+    <h2>Nova Análise</h2>
+
+    <textarea id="textInput" placeholder="Digite sua análise..."></textarea>
+
+    <div class="modal-buttons">
+      <button class="save" id="saveBtn">Salvar</button>
+      <button class="cancel" id="closeBtn">Cancelar</button>
+    </div>
+
+  </div>
+</div>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
@@ -209,7 +281,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDJnEG0ocRf3qHXzMiwG-tcS7EK36onNnA",
+  apiKey: "AIzaSyDJnEG0ocRf3qHXzMiwG-tcS7EK36onNNA",
   authDomain: "insightflow-5dee2.firebaseapp.com",
   projectId: "insightflow-5dee2",
   storageBucket: "insightflow-5dee2.firebasestorage.app",
@@ -220,40 +292,59 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const historyDiv = document.getElementById("history");
+const modal = document.getElementById("modal");
+const openModal = document.getElementById("openModal");
+const closeBtn = document.getElementById("closeBtn");
+const saveBtn = document.getElementById("saveBtn");
+const textInput = document.getElementById("textInput");
+const history = document.getElementById("history");
+const pdfBtn = document.getElementById("pdfBtn");
+
 let cache = [];
 
+function open() {
+  modal.style.display = "flex";
+}
+
+function close() {
+  modal.style.display = "none";
+  textInput.value = "";
+}
+
+openModal.addEventListener("click", open);
+closeBtn.addEventListener("click", close);
+
 async function load() {
-  historyDiv.innerHTML = "";
+  history.innerHTML = "";
   cache = [];
 
   const snap = await getDocs(collection(db, "analises"));
 
   snap.forEach(doc => {
-    const data = doc.data();
-    cache.push(data.texto);
+    cache.push(doc.data().texto);
 
     const div = document.createElement("div");
     div.className = "item";
-    div.innerText = data.texto;
-    historyDiv.appendChild(div);
+    div.innerText = doc.data().texto;
+
+    history.appendChild(div);
   });
 }
 
-document.getElementById("add").addEventListener("click", async () => {
-  const text = prompt("Digite sua análise:");
+saveBtn.addEventListener("click", async () => {
 
-  if (!text) return;
+  if(!textInput.value.trim()) return;
 
   await addDoc(collection(db, "analises"), {
-    texto: text,
+    texto: textInput.value,
     data: new Date()
   });
 
+  close();
   load();
 });
 
-document.getElementById("pdf").addEventListener("click", () => {
+pdfBtn.addEventListener("click", () => {
 
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
@@ -262,7 +353,7 @@ document.getElementById("pdf").addEventListener("click", () => {
 
   let y = 20;
 
-  cache.forEach((t, i) => {
+  cache.forEach((t,i) => {
     doc.text(`${i+1}. ${t}`, 10, y);
     y += 10;
   });
